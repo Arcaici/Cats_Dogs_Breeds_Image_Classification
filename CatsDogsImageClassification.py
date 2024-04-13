@@ -61,7 +61,7 @@ augmentation_transform = transforms.Compose([
 base_train_dataset = CatsDogsDataset(train_df, transform=transform)
 aug_train_dataset = CatsDogsDataset(train_df,  transform=augmentation_transform)
 train_dataset = ConcatDataset([base_train_dataset, aug_train_dataset])
-
+print(train_dataset.__len__())
 val_dataset = CatsDogsDataset(val_df, transform=transform)
 test_dataset = CatsDogsDataset(test_df, transform=transform)
 
@@ -692,6 +692,8 @@ for epoch in tqdm(range(num_epochs), desc="Epochs"):
 
     if no_improvement_count >= patience:
         print(f'Early stopping after {patience} epochs without improvement.')
+        print("Train loss Vgg16: ", train_loss)
+        print("Valid loss Vgg16: ", val_loss)
         break
 
 torch.save(model_pretrained_vgg16.state_dict(), 'breed_model_vgg.pth')

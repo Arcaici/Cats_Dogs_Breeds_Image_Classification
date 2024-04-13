@@ -75,6 +75,21 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
+validation_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=1, shuffle=False)
+sample_images, _, sample_species = next(iter(validation_dataloader))
+
+# Convert sample_images tensor to a NumPy array
+sample_images_np = sample_images[0].numpy()  # Assuming batch size is 1
+
+# Rearrange dimensions for plotting
+image_to_plot = np.transpose(sample_images_np, (1, 2, 0))
+
+# Plot the image
+plt.imshow(image_to_plot)
+plt.axis('off')  # Turn off axis labels and ticks
+plt.show()
+
+
 unique_values, counts = np.unique(proj_df['classname'], return_counts=True)
 print("# of unique values : ", len(unique_values))
 plt.bar(unique_values, counts)
@@ -691,12 +706,16 @@ plt.plot(breed_val_loss_list, 'r', label='Validation Loss',
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.title("BreedClassifier Loss trend")
+plt.title("Hierarchical BreedClassifier Loss trend")
 plt.show()
 
 validation_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=1, shuffle=False)
 sample_images, _, sample_species = next(iter(validation_dataloader))
 
+image_to_plot = sample_images[0].transpose((1, 2, 0))
+plt.imshow(sample_images)
+plt.axis('off')  # Turn off axis labels and ticks
+plt.show()
 # Generate heatmaps
 heatmaps_1 = breed_model.generate_heatmaps((sample_images.cuda(), sample_species.cuda()))
 
@@ -708,7 +727,7 @@ for i, heatmap in enumerate(heatmaps_1):
     row = i // 2
     col = i % 2
     axs[row, col].imshow(heatmap.squeeze().numpy(), cmap='viridis')
-    axs[row, col].set_title(f'BreedClassifier G Conv Layer {i + 1} Activation')
+    axs[row, col].set_title(f'Hierarchical BreedClassifier Conv Layer {i + 1} Activation')
     axs[row, col].axis('off')
 
 plt.show()
@@ -742,7 +761,7 @@ for i, heatmap in enumerate(heatmaps):
     row = i // 2
     col = i % 2
     axs[row, col].imshow(heatmap.squeeze().numpy(), cmap='viridis')
-    axs[row, col].set_title(f'CatsDogsClassifier G Conv Layer {i + 1} Activation')
+    axs[row, col].set_title(f'CatsDogsClassifier Conv Layer {i + 1} Activation')
     axs[row, col].axis('off')
 
 plt.show()
